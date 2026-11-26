@@ -1,0 +1,612 @@
+/* CumpliSign — estética SOC técnica (dark-first, toggle claro) */
+
+:root {
+  --accent: #f5b93f;
+  --accent-strong: #ffc94d;
+  --info: #2dd4bf;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  color-scheme: dark;
+
+  /* ── Delight: tokens de animación ── */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --speed-fast: 150ms;
+  --speed-normal: 250ms;
+  --speed-slow: 400ms;
+}
+
+[data-theme='light'] { color-scheme: light; }
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; margin: 0; }
+
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'cv02', 'cv03';
+}
+
+/* Fondo con textura sutil de grilla (consola) — solo en dark */
+body {
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.02) 1px, transparent 0);
+  background-size: 26px 26px;
+}
+[data-theme='light'] body { background-image: none; }
+
+/* ── Jerarquía tipográfica ── */
+h1, h2, h3, h4, h5, .ant-typography h1, .ant-typography h2,
+.ant-typography h3, .ant-typography h4, .ant-typography h5 {
+  font-family: var(--font-display) !important;
+  letter-spacing: -0.02em;
+}
+
+/* Títulos de página con kicker mono */
+.page-kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2px;
+  display: block;
+}
+
+/* ── Datos / IDs en mono ── */
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.code-tag { font-family: var(--font-mono); font-size: 12px; }
+
+/* Números KPI grandes con mono */
+.kpi-value {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* ── Densidad de datos: filas más compactas ── */
+.ant-table-tbody > tr > td { font-size: 13px; }
+.ant-table-tbody > tr.row-vencida > td { background: rgba(255, 92, 92, 0.07); }
+.ant-table-thead > tr > th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Scrollbars ── */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border, #25313a); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent, #f5b93f); }
+
+/* ── Entrada de página (stagger suave) ── */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise { animation: rise 0.4s var(--ease-out-expo) both; }
+.rise-1 { animation-delay: 0.05s; }
+.rise-2 { animation-delay: 0.12s; }
+.rise-3 { animation-delay: 0.18s; }
+.rise-4 { animation-delay: 0.24s; }
+
+/* ═══════════════════════════════════════════════
+   DELIGHT: Micro-interacciones y animaciones
+   ═══════════════════════════════════════════════ */
+
+/* ── 1. Botones: hover lift + active press ── */
+.ant-btn:not(.ant-btn-text):not(.ant-btn-link):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform var(--speed-fast) var(--ease-out-quart),
+              box-shadow var(--speed-normal) var(--ease-out-quart);
+}
+.ant-btn:not(.ant-btn-text):not(.ant-btn-link):active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 80ms ease-out, box-shadow 80ms ease-out;
+}
+
+/* ── 2. KPI cards: entrada escalonada + hover glow ── */
+.metric-card {
+  transition: border-color var(--speed-normal) ease,
+              box-shadow var(--speed-normal) var(--ease-out-quart);
+}
+.metric-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(245, 185, 63, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* KPI con clic (navegable): indicador sutil */
+.metric-card[role="button"]:hover .kpi-value {
+  text-shadow: 0 0 12px currentColor;
+}
+
+/* ── 3. Tabla: filas con transición suave al hover ── */
+.ant-table-tbody > tr {
+  transition: background-color var(--speed-fast) ease-out;
+}
+
+/* ── 4. Success check: animación al completar acción ── */
+@keyframes success-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+.success-pulse {
+  animation: success-pulse 300ms var(--ease-out-quart);
+}
+
+/* ── 5. Skeleton: shimmer sutil en vez de estático ── */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.ant-skeleton-content .ant-skeleton-title,
+.ant-skeleton-content .ant-skeleton-paragraph > li {
+  background: linear-gradient(
+    90deg,
+    var(--surface) 25%,
+    var(--elevated, var(--surface)) 50%,
+    var(--surface) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.8s linear infinite;
+}
+
+/* ── 6. Page transition: fade suave entre rutas ── */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.ant-layout-content {
+  animation: page-enter 300ms var(--ease-out-quart);
+}
+
+/* ── 7. Drawer: entrada más suave (sobre AntD default) ── */
+.ant-drawer-content-wrapper {
+  transition: transform 280ms var(--ease-out-expo) !important;
+}
+
+/* ── 8. Agenda: resúmenes pulsables con feedback táctil ── */
+.ant-card[role="button"]:active {
+  transform: scale(0.98);
+  transition: transform 80ms ease-out;
+}
+
+/* ── 9. Notificación bell: shake sutil al llegar nueva ── */
+@keyframes bell-ring {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(8deg); }
+  40% { transform: rotate(-8deg); }
+  60% { transform: rotate(5deg); }
+  80% { transform: rotate(-5deg); }
+}
+.bell-ringing {
+  animation: bell-ring 500ms ease-in-out;
+}
+
+/* ── 10. Badge counter: pop al cambiar valor ── */
+@keyframes badge-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+.ant-badge-count {
+  animation: badge-pop 200ms var(--ease-out-quart);
+}
+
+/* ── 11. Tooltip de heatmap: entrada elegante ── */
+.ant-tooltip {
+  animation: rise 150ms var(--ease-out-quart);
+}
+
+/* ── 12. Menú lateral: item activo con glow sutil ── */
+.ant-menu-dark .ant-menu-item-selected {
+  text-shadow: 0 0 8px rgba(245, 185, 63, 0.3);
+}
+
+/* ── 13. Login: logo con entrada suave ── */
+@keyframes logo-entrance {
+  from { opacity: 0; transform: scale(0.9) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.login-logo {
+  animation: logo-entrance 500ms var(--ease-out-expo) both;
+}
+
+/* ── 14. Progress bar: llenado suave ── */
+.ant-progress-bg {
+  transition: width 400ms var(--ease-out-quart);
+}
+
+/* ── 15. Chips/tags: micro-interacción al hover ── */
+.ant-tag {
+  transition: all var(--speed-fast) ease-out;
+}
+.ant-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ── 16. Heatmap cell: transición de entrada ── */
+@keyframes cell-appear {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+.heatmap-cell {
+  animation: cell-appear 200ms var(--ease-out-quart) both;
+}
+
+/* ── 17. Segmented control: transición suave ── */
+.ant-segmented-thumb {
+  transition: transform var(--speed-normal) var(--ease-out-quart),
+              width var(--speed-normal) var(--ease-out-quart);
+}
+
+/* ── 18. Form: inputs con glow al enfocar ── */
+.ant-input:focus,
+.ant-select:focus .ant-select-selector,
+.ant-input-number:focus {
+  box-shadow: 0 0 0 2px rgba(245, 185, 63, 0.1) !important;
+  transition: box-shadow var(--speed-fast) ease-out;
+}
+
+/* ── 19. Empty states: icono flotando sutilmente ── */
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.ant-empty-image {
+  animation: float-gentle 3s ease-in-out infinite;
+}
+
+/* ── 20. Sidebar collapse: transición suave del ancho ── */
+.ant-layout-sider {
+  transition: all 200ms var(--ease-out-quart);
+}
+
+/* ── Reduced motion: desactivar todas las animaciones ── */
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .success-pulse,
+  .ant-skeleton-content .ant-skeleton-title,
+  .ant-skeleton-content .ant-skeleton-paragraph > li,
+  .ant-layout-content,
+  .heatmap-cell,
+  .login-logo,
+  .ant-empty-image,
+  .bell-ringing,
+  .ant-tooltip,
+  .ant-badge-count,
+  .ant-tag,
+  .ant-progress-bg,
+  .ant-segmented-thumb,
+  .ant-drawer-content-wrapper,
+  .ant-layout-sider {
+    animation: none !important;
+    transition: none !important;
+  }
+  .ant-btn:not(.ant-btn-text):not(.ant-btn-link):hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* ── Marca del sidebar ── */
+.brand {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 18px 16px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-subtle, #1e2a32);
+}
+.brand-mark {
+  width: 26px; height: 26px; border-radius: 6px;
+  display: grid; place-items: center;
+  background: var(--accent); color: #1a1300;
+  font-size: 14px; font-weight: 700;
+}
+.brand-sub { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--text-2, #9fb0ba); text-transform: uppercase; }
+
+/* Acción activa del menú con barra ámbar a la izquierda */
+.ant-menu .ant-menu-item-selected { position: relative; }
+.ant-menu .ant-menu-item-selected::before {
+  content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px;
+  background: var(--accent); border-radius: 2px;
+}
+
+/* Card de métrica refinada (sin sombras genéricas) */
+.metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 16px 18px;
+  position: relative;
+  overflow: hidden;
+}
+.metric-card::after {
+  content: ''; position: absolute; inset: 0 auto 0 0; width: 3px;
+  background: var(--accent); opacity: 0.85;
+}
+.metric-label {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-2); margin-bottom: 6px;
+}
+
+/* Focus visible accesible */
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── Vista printable/exportable del dashboard ── */
+@media print {
+  /* Ocultar navegación y chrome: solo el contenido del tablero */
+  .ant-layout-sider,
+  .ant-layout-header,
+  .no-print,
+  .ant-tabs-tab-btn,
+  button { display: none !important; }
+
+  /* El contenido ocupa todo el ancho, sin márgenes */
+  .ant-layout-content,
+  .ant-layout,
+  body, #root {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    min-height: auto !important;
+  }
+
+  /* Fondo blanco limpio para impresión (el dark no imprime bien) */
+  body {
+    background: #ffffff !important;
+    background-image: none !important;
+    color-scheme: light !important;
+  }
+  .metric-card, .ant-card {
+    background: #ffffff !important;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    color: #17211f !important;
+    break-inside: avoid;
+  }
+  .metric-label, .ant-typography, h1, h2, h3, h4 {
+    color: #17211f !important;
+  }
+  .kpi-value { color: #17211f !important; }
+
+  /* Evitar cortes de página en tarjetas y tablas */
+  .ant-row { break-inside: avoid; }
+  .ant-table { font-size: 10px !important; }
+
+  /* Ocultar gráficos de canvas si no renderizan en print (opcional: los dejamos) */
+  canvas { max-width: 100% !important; }
+}
+
+/* ── Sidebar moderno (grupos + item activo) ── */
+.ant-menu-dark .ant-menu-item-selected {
+  background: rgba(245, 185, 63, 0.12) !important;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.ant-menu-dark .ant-menu-item-selected .anticon,
+.ant-menu-dark .ant-menu-submenu-selected > .ant-menu-submenu-title,
+.ant-menu-dark .ant-menu-submenu-selected > .ant-menu-submenu-title .anticon {
+  color: var(--accent-strong, #ffc94d);
+}
+.ant-menu-dark .ant-menu-item:hover,
+.ant-menu-dark .ant-menu-submenu-title:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+.sidebar-group-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+.ant-menu-inline-collapsed .sidebar-group-label { font-size: 12px; }
+.ant-menu-dark .ant-menu-sub {
+  background: rgba(0, 0, 0, 0.18) !important;
+}
+
+/* kbd hint (⌘K, esc) */
+.kbd-hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  border: 1px solid var(--border-subtle, #2a3640);
+  border-radius: 4px;
+  padding: 0 5px;
+  margin-left: 6px;
+  color: var(--text-2);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* ── Paleta de comandos ⌘K ── */
+.cmdk-modal .ant-modal-content {
+  background: var(--bg-elev, #121a21) !important;
+  border: 1px solid var(--border-subtle, #2a3640);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55) !important;
+  padding: 0 !important;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.cmdk-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-subtle, #2a3640);
+}
+.cmdk-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: 2px solid transparent;
+  color: var(--text, #e8ecef);
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+.cmdk-input::placeholder { color: var(--text-2, #9fb0ba); }
+.cmdk-list {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 6px;
+}
+.cmdk-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--speed-fast) ease-out, box-shadow var(--speed-fast) ease-out;
+}
+.cmdk-item.activo {
+  background: rgba(245, 185, 63, 0.12);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+.cmdk-item-icon { color: var(--text-2); width: 18px; text-align: center; }
+.cmdk-item.activo .cmdk-item-icon { color: var(--accent); }
+.cmdk-item-label { flex: 1; font-size: 13px; color: var(--text, #e8ecef); }
+.cmdk-item-grupo {
+  font-family: var(--font-mono);
+  font-size: 9px !important;
+  margin-right: 0;
+  opacity: 0.7;
+}
+.cmdk-footer {
+  display: flex;
+  gap: 18px;
+  padding: 9px 16px;
+  border-top: 1px solid var(--border-subtle, #2a3640);
+  font-size: 10px;
+  color: var(--text-2, #9fb0ba);
+}
+
+/* ── Paleta de comandos: entrada dramática ── */
+@keyframes cmdk-enter {
+  from { opacity: 0; transform: scale(0.96) translateY(-8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.cmdk-modal .ant-modal-content {
+  animation: cmdk-enter 200ms var(--ease-out-expo);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Delight — consola TitanTech (2026-11-13)
+   Personalidad: precisión quirúrgica. Corto, decidido, turquesa.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Entrada de contenido (tabs, tablas, paneles) */
+@keyframes tt-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  animation: tt-fade-up 350ms var(--ease-out-quart) both;
+}
+
+/* Filas de tabla: revelado escalonado al montar */
+@keyframes tt-row-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.tt-row-in {
+  animation: tt-row-in 300ms var(--ease-out-quart) both;
+}
+.tt-row-in:nth-child(1) { animation-delay: 0ms; }
+.tt-row-in:nth-child(2) { animation-delay: 40ms; }
+.tt-row-in:nth-child(3) { animation-delay: 80ms; }
+.tt-row-in:nth-child(4) { animation-delay: 120ms; }
+.tt-row-in:nth-child(5) { animation-delay: 160ms; }
+.tt-row-in:nth-child(6) { animation-delay: 200ms; }
+.tt-row-in:nth-child(7) { animation-delay: 240ms; }
+.tt-row-in:nth-child(n+8) { animation-delay: 280ms; }
+
+/* KPI: pop sutil al actualizar valor */
+@keyframes tt-kpi-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.tt-kpi-pop {
+  animation: tt-kpi-pop 350ms var(--ease-out-quart);
+}
+
+/* Checkmark dibujado (éxito de onboarding) */
+@keyframes tt-check-draw {
+  from { stroke-dashoffset: 60; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes tt-circle-draw {
+  from { stroke-dashoffset: 200; }
+  to { stroke-dashoffset: 0; }
+}
+.tt-check-svg circle {
+  stroke-dasharray: 200;
+  animation: tt-circle-draw 450ms var(--ease-out-quart) both;
+}
+.tt-check-svg path {
+  stroke-dasharray: 60;
+  animation: tt-check-draw 300ms var(--ease-out-quart) 250ms both;
+}
+
+/* Tag de plan/estado: pulse breve al cambiar */
+@keyframes tt-tag-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.12); box-shadow: 0 0 0 4px rgba(168,199,218,0.18); }
+  100% { transform: scale(1); }
+}
+.tt-tag-pulse {
+  animation: tt-tag-pulse 400ms var(--ease-out-quart);
+}
+
+/* Botones de acción: micro-feedback press */
+.ant-btn.tt-press:active {
+  transform: scale(0.96);
+  transition: transform 80ms ease-out;
+}
+
+/* Modal de éxito: entrada con rebote suave controlado */
+@keyframes tt-success-enter {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+.tt-success .ant-modal-body {
+  animation: tt-success-enter 300ms var(--ease-out-quart) both;
+}
+
+/* Switch de productos: el label late al cambiar */
+@keyframes tt-switch-label {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.tt-switch-label {
+  animation: tt-switch-label 400ms ease-in-out;
+}
+
+/* ── Delight: reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in,
+  .tt-row-in,
+  .tt-kpi-pop,
+  .tt-tag-pulse,
+  .tt-success .ant-modal-body,
+  .tt-switch-label {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .tt-check-svg circle,
+  .tt-check-svg path {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}
