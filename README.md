@@ -6,6 +6,21 @@ La **consola de operación TitanTech** (dev-titantech.cumplisign.com): la interf
 
 Este repo es un **extracto del monorepo principal** `jpalmae/grc` (carpeta `frontend-titantech/`), publicado aquí para trabajo de diseño/rediseño. El backend vive en el monorepo.
 
+## Contributors
+
+| | | |
+|---|---|---|
+| [@cmadridnarvaez](https://github.com/cmadridnarvaez) | Cristian Madrid | Arquitectura, backend API, deploy, docs |
+| [@saambellido-dev](https://github.com/saambellido-dev) | Samantha Bellido | Rediseño de permisos y módulos (PR #1) |
+| [@jpalmae](https://github.com/jpalmae) | Jorge Palma | Revisor principal en el monorepo |
+| [@mbaeza](https://github.com/mbaeza) | Martin Baeza | Producto y negocio |
+
+---
+
+<a href="https://github.com/cmadridnarvaez/superportalcumpli/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=cmadridnarvaez/SuperPortalCUMPLI&max=4&columns=4" alt="Contributors" />
+</a>
+
 ## Estructura
 
 ```
