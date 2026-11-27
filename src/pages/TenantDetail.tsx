@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   App, Button, Card, Descriptions, Form, Input, Modal, Popconfirm, Select,
-  Space, Switch, Table, Tabs, Tag, Tooltip, Typography,
+  Space, Table, Tabs, Tag, Tooltip, Typography,
 } from 'antd';
 import {
   ArrowLeftOutlined, KeyOutlined, LockOutlined, PlusOutlined,
@@ -11,6 +11,7 @@ import {
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { superApi, TenantUser, ROLES_TENANT, APP_PRINCIPAL_URL } from '@/api/super';
 import { CheckDraw } from '@/components/CheckDraw';
+import { TenantProducts } from '@/components/TenantProducts';
 import { PLAN_COLORS } from '@/pages/Dashboard';
 
 const { Title, Text } = Typography;
@@ -26,7 +27,7 @@ export default function TenantDetail() {
     queryKey: ['super-tenant', orgId],
     queryFn: () => superApi.tenant(orgId), enabled: !!orgId,
   });
-  const { data: productos } = useQuery({
+  const { data: productos, isLoading: loadingProductos, isError: errorProductos, refetch: refetchProductos } = useQuery({
     queryKey: ['super-tenant-productos', orgId],
     queryFn: () => superApi.productos(orgId), enabled: !!orgId,
   });
@@ -282,26 +283,9 @@ export default function TenantDetail() {
                   </Space>
                 </Card>
 
-                <Card title="Productos normativos contratados" styles={{ header: { borderBottom: 'none' } }}
-                  extra={<Tooltip title="Un producto deshabilitado impide cargar su marco en '¿Qué me aplica?' (403). El cambio queda en bitácora y notifica a los admins si se desactiva.">
-                    <Text type="secondary">?</Text>
-                  </Tooltip>}>
-                  {(productos ?? []).map((p) => (
-                    <div key={p.id} style={{
-                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                      padding: '10px 0', borderBottom: '1px solid var(--border-subtle)',
-                    }}>
-                      <div>
-                        <Text strong>{p.nombre}</Text>{' '}
-                        <Tag className="mono">{p.codigo}</Tag>
-                        <div style={{ color: 'var(--text-2)', fontSize: 12 }}>{p.descripcion}</div>
-                      </div>
-                      <Switch checked={p.habilitado} checkedChildren="incluido" unCheckedChildren="no contratado"
-                        loading={patchProducto.isPending && patchProducto.variables?.pid === p.id}
-                        onChange={(habilitado) => patchProducto.mutate({ pid: p.id, habilitado })} />
-                    </div>
-                  ))}
-                </Card>
+                <TenantProducts key={orgId} orgId={orgId} products={productos} loading={loadingProductos}
+                  error={errorProductos} retry={() => void refetchProductos()} legacyPending={patchProducto.isPending}
+                  updateLegacy={(pid, habilitado) => patchProducto.mutate({ pid, habilitado })} />
               </Space>
             ),
           },
